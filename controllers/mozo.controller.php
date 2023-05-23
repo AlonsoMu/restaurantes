@@ -45,7 +45,9 @@ if(isset($_POST['operacion'])){
 
         $mozo->registrarPedidos($datosForm);
 
-        // Crear instancia de Printer y conectar con la impresora
+ 
+
+        /* Crear instancia de Printer y conectar con la impresora
         $connector = new FilePrintConnector('TMUSI');
         $printer = new Printer($connector);
 
@@ -61,7 +63,7 @@ if(isset($_POST['operacion'])){
         $printer->cut();
 
         // Cerrar la conexión con la impresora
-        $printer->close();
+        $printer->close();*/
         
     }
 
@@ -77,6 +79,7 @@ if(isset($_POST['operacion'])){
       
           //Paso 2: Enviar el arreglo como paramentro del metodo ACTUALIZAR
             $mozo->actualizarPedido($datosForm);
+
     }
 
     if($_POST['operacion'] == 'obtenerpedido'){
@@ -87,5 +90,45 @@ if(isset($_POST['operacion'])){
     if($_POST['operacion'] == 'eliminar'){
         $mozo->eliminarPedido($_POST['idmozo']);
     }
+
+
+    if ($_POST['operacion'] == 'imprimirTicket') {
+    $idPedido = $_POST['idPedido'];
+
+    // Obtener los detalles del pedido con el ID proporcionado
+    $pedido = $mozo->getPedido($idPedido);
+    
+    if ($pedido) {
+        $mesa = $pedido['mesa'];
+        $entrada = $pedido['entrada'];
+        $menu = $pedido['menu'];
+        $descripcion = $pedido['descripcion'];
+        $total = $pedido['total'];
+
+        // Crear instancia de Printer y conectar con la impresora
+        $connector = new FilePrintConnector('TMUSI');
+        $printer = new Printer($connector);
+
+        // Enviar contenido del ticket a imprimir
+        $printer->text("¡Bienvenido a nuestro restaurante!\n");
+        $printer->text("Mesa: {$mesa}\n");
+        $printer->text("Entrada: {$entrada}\n");
+        $printer->text("Menú: {$menu}\n");
+        $printer->text("Descripción: {$descripcion}\n");
+        $printer->text("Total: {$total}\n");
+
+        // Cortar el papel
+        $printer->cut();
+
+        // Cerrar la conexión con la impresora
+        $printer->close();
+
+        // Respuesta de éxito
+        echo json_encode(["success" => true]);
+    } else {
+        // Respuesta de error
+        echo json_encode(["success" => false, "message" => "No se encontró el pedido"]);
+    }
+}
 }
 
