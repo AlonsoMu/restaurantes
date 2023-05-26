@@ -1,5 +1,6 @@
 <?php
 include('../models/Conexion.php');
+
 ?>
 
 <!doctype html>
@@ -19,6 +20,7 @@ include('../models/Conexion.php');
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
 
     <link rel="shortcut icon" href="../images/gustitos.jpg">
+    
 
     <style>
     .centered-text {
@@ -182,6 +184,10 @@ include('../models/Conexion.php');
     <!-- jQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
+    <script src="../controllers/mozo.controller.php"></script>
+
+    
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -204,7 +210,9 @@ include('../models/Conexion.php');
         });
     }   
 
-    mostrarPedidos(); 
+    mostrarPedidos();
+
+    
 
     function registrarPedido(){
         if(confirm("¿Está seguro de registrar un pedido?")){
@@ -240,6 +248,8 @@ include('../models/Conexion.php');
             });
         }
     }
+
+    
 
     function abrirModal(){
         datosNuevos = true;
@@ -302,68 +312,9 @@ include('../models/Conexion.php');
         }
      });
 
-     function imprimirTicket(idPedido) {
-    // Realizar la solicitud AJAX para imprimir el ticket
-        $.ajax({
-            url: '../controllers/mozo.controller.php',
-            type: 'POST',
-            data: { 
-            operacion: 'imprimirTicket',
-            idPedido: idPedido 
-        },
-            dataType: 'json',
-            success: function(response) {
-            if (response.success) {
-                // Imprimir ticket exitoso, puedes realizar alguna acción adicional si es necesario
-                console.log('Ticket impreso correctamente');
-            } else {
-                // Mostrar mensaje de error en caso de fallo en la impresión
-                console.log('Error al imprimir el ticket:', response.message);
-            }
-            },
-            error: function(xhr, status, error) {
-            // Mostrar mensaje de error en caso de error en la solicitud AJAX
-            console.log('Error en la solicitud AJAX:', error);
-            }
-        });
-    }
+     
 
-        /*function imprimir(data) {
-        // Crear una nueva instancia de la clase de impresión
-        let printer = new ThermalPrinter();
-
-        // Establecer las configuraciones de impresión
-        printer.setPrinterDriver(new PrinterDriverConsole());
-        printer.setPrintCommand(new PrintCommandESCPOS());
-        printer.setEncoding('CP437');
-        printer.setDensity(8, 8);
-
-        // Agregar los datos del mozo al ticket
-        printer.setTextDoubleHeight(true);
-        printer.setTextDoubleWidth(true);
-        printer.setTextAlignment('center');
-        printer.printLine('Detalles del Mozo');
-        printer.setTextDoubleHeight(false);
-        printer.setTextDoubleWidth(false);
-        printer.setTextAlignment('left');
-        printer.printLine('Mesa: ' + data.mesa);
-        printer.printLine('Entrada: ' + data.entrada);
-        printer.printLine('Menú: ' + data.menu);
-        printer.printLine('Descripción: ' + data.descripcion);
-        printer.setTextDoubleHeight(true);
-        printer.setTextDoubleWidth(true);
-        printer.setTextAlignment('right');
-        printer.printLine('Total: ' + data.total);
-        printer.setTextDoubleHeight(false);
-        printer.setTextDoubleWidth(false);
-        printer.feed(3);
-        printer.cut();
-
-        // Enviar los datos a la impresora
-        printer.send();
-
-        // Mostrar un mensaje de éxito en la consola
-        console.log('El ticket se ha enviado a la impresora térmica.');*/
+     
     
 
     // Ejecución automática
@@ -373,6 +324,39 @@ include('../models/Conexion.php');
 
 
     });
+
+    function imprimirTicket(idmozo) {
+    // Realizar la solicitud AJAX para imprimir el ticket
+    $.ajax({
+        url: '../controllers/mozo.controller.php',
+        type: 'POST',
+        data: {
+        operacion: 'imprimirTicket',
+        idmozo: idmozo
+        },
+        dataType: 'json',
+        success: function(response) {
+        if (response.success) {
+            // Imprimir ticket exitoso, puedes realizar alguna acción adicional si es necesario
+            console.log('Ticket impreso correctamente');
+        } else {
+            // Mostrar mensaje de error en caso de fallo en la impresión
+            console.log('Error al imprimir el ticket:', response.message);
+        }
+        },
+        error: function(xhr, status, error) {
+            if (xhr.responseText) {
+                console.log('Error en la solicitud AJAX:', xhr.responseText);
+            } else {
+                console.log('Error en la solicitud AJAX:', error);
+            }
+        }
+    });
+
+
+    }
+
+    
     </script>
 </body>
 

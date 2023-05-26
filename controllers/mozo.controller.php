@@ -1,10 +1,8 @@
 <?php
-
 require_once '../models/Mozo.php';
+require_once '../vendor/autoload.php';
 use Mike42\Escpos\Printer;
-use Mike42\Escpos\PrintConnectors\FilePrintConnector;
-
-
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 if(isset($_POST['operacion'])){
     $mozo = new Mozo();
@@ -44,26 +42,6 @@ if(isset($_POST['operacion'])){
         ];
 
         $mozo->registrarPedidos($datosForm);
-
- 
-
-        /* Crear instancia de Printer y conectar con la impresora
-        $connector = new FilePrintConnector('TMUSI');
-        $printer = new Printer($connector);
-
-        // Enviar contenido del ticket a imprimir
-        $printer->text("¡Bienvenido a nuestro restaurante!\n");
-        $printer->text("Mesa: {$_POST['mesa']}\n");
-        $printer->text("Entrada: {$_POST['entrada']}\n");
-        $printer->text("Menú: {$_POST['menu']}\n");
-        $printer->text("Descripción: {$_POST['descripcion']}\n");
-        $printer->text("Total: {$_POST['total']}\n");
-
-        // Cortar el papel
-        $printer->cut();
-
-        // Cerrar la conexión con la impresora
-        $printer->close();*/
         
     }
 
@@ -93,42 +71,48 @@ if(isset($_POST['operacion'])){
 
 
     if ($_POST['operacion'] == 'imprimirTicket') {
-    $idPedido = $_POST['idPedido'];
-
-    // Obtener los detalles del pedido con el ID proporcionado
-    $pedido = $mozo->getPedido($idPedido);
+        $idmozo = $_POST['idmozo'];
     
-    if ($pedido) {
-        $mesa = $pedido['mesa'];
-        $entrada = $pedido['entrada'];
-        $menu = $pedido['menu'];
-        $descripcion = $pedido['descripcion'];
-        $total = $pedido['total'];
+        // Obtener los detalles del pedido con el ID proporcionado
+        $pedido = $mozo->getPedido($idmozo);
 
-        // Crear instancia de Printer y conectar con la impresora
-        $connector = new FilePrintConnector('TMUSI');
-        $printer = new Printer($connector);
-
-        // Enviar contenido del ticket a imprimir
-        $printer->text("¡Bienvenido a nuestro restaurante!\n");
-        $printer->text("Mesa: {$mesa}\n");
-        $printer->text("Entrada: {$entrada}\n");
-        $printer->text("Menú: {$menu}\n");
-        $printer->text("Descripción: {$descripcion}\n");
-        $printer->text("Total: {$total}\n");
-
-        // Cortar el papel
-        $printer->cut();
-
-        // Cerrar la conexión con la impresora
-        $printer->close();
-
-        // Respuesta de éxito
-        echo json_encode(["success" => true]);
-    } else {
-        // Respuesta de error
-        echo json_encode(["success" => false, "message" => "No se encontró el pedido"]);
+        try {
+        
+            if ($pedido) {
+                $mesa = $pedido['mesa'];
+                $entrada = $pedido['entrada'];
+                $menu = $pedido['menu'];
+                $descripcion = $pedido['descripcion'];
+                $total = $pedido['total'];
+        
+                // Crear instancia de Printer y conectar con la impresora
+                $connector = new WindowsPrintConnector('EPSON TM-T20IIIL Receipt');
+                $printer = new Printer($connector);
+        
+                // Enviar contenido del ticket a imprimir
+                $printer->text("¡Bienvenido a nuestro restaurante!\n");
+                $printer->text("Mesa: {$mesa}\n");
+                $printer->text("Entrada: {$entrada}\n");
+                $printer->text("Menú: {$menu}\n");
+                $printer->text("Descripción: {$descripcion}\n");
+                $printer->text("Total: {$total}\n");
+        
+                // Cortar el papel
+                $printer->cut();
+        
+                // Cerrar la conexión con la impresora
+                $printer->close();
+        
+                // Respuesta de éxito
+                echo json_encode(["success" => true]);
+            } else {
+                // Respuesta de error
+                echo json_encode(["success" => false, "message" => "No se encontró el pedido"]);
+            }
+        } catch (Exception $e) {
+            // Respuesta de error en caso de excepción
+            echo json_encode(["success" => false, "message" => "Error al generar el ticket: " . $e->getMessage()]);
+        }
     }
-}
 }
 
