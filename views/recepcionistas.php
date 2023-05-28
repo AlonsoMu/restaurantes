@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION["login"])) {
+    // Redirigir al usuario a la página de inicio de sesión
+    header("Location: ../login.php");
+    exit(); // Asegura que el script se detenga después de la redirección
+  }
+?>
 <!doctype html>
 <html lang="es">
 
@@ -93,7 +101,9 @@
             </table>
         </div>
         </div>
-
+            <div class="card-footer text-end d-flex justify-content-between">
+                <a href="entrada.php" class="btn btn-warning btn-sm"><i class="bi bi-arrow-left"></i> Volver</a>
+            </div>
         </div>
     </div>
 
@@ -107,7 +117,7 @@
     <div class="modal fade" id="modal-registro-pedidos" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-secondary text-light">
+                <div class="modal-header bg-success text-light">
                     <h5 class="modal-title" id="modal-titulo">Registro de Pedidos</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -177,6 +187,9 @@
     <!-- jQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
 
     $(document).ready(function (){
@@ -198,39 +211,53 @@
 
     mostrarPedidos(); 
 
-    function registrarPedido(){
-        if(confirm("Está seguro de registrar un pedido?")){
+    function registrarPedido() {
+        Swal.fire({
+            title: '¿Está seguro de registrar un pedido?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, registrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let datos = {
+                    operacion: 'registrar',
+                    idrecepcionista: idrecepcionistaactualizar,
+                    nombre: $("#nombre").val(),
+                    entrada: $("#entrada").val(),
+                    menu: $("#menu").val(),
+                    descripcion: $("#descripcion").val(),
+                    total: $("#total").val()
+                };
 
-            let datos = {
-                operacion   : 'registrar',
-                idrecepcionista      : idrecepcionistaactualizar,
-                nombre       : $("#nombre").val(),
-                entrada     : $("#entrada").val(),
-                menu        : $("#menu").val(),
-                descripcion : $("#descripcion").val(),
-                total       : $("#total").val()
-            };
-
-            if(!datosNuevos){
-                datos["operacion"] = "actualizar";
-            }
-
-            $.ajax({
-                url: '../controllers/recepcionista.controller.php',
-                type: 'POST',
-                data: datos,
-                success: function(result){
-                    if(result == ""){
-                        $("#formulario-pedidos")[0].reset();
-
-                        mostrarPedidos();
-
-                        $("#modal-registro-pedidos").modal('hide');
-                    }
+                if (!datosNuevos) {
+                    datos["operacion"] = "actualizar";
                 }
-            });
-        }
+
+                $.ajax({
+                    url: '../controllers/recepcionista.controller.php',
+                    type: 'POST',
+                    data: datos,
+                    success: function(result) {
+                        if (result == "") {
+                            $("#formulario-pedidos")[0].reset();
+                            mostrarPedidos();
+                            $("#modal-registro-pedidos").modal('hide');
+                            Swal.fire({
+                                title: '¡Pedido registrado correctamente!',
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+                    }
+                });
+            }
+        });
     }
+
 
     function abrirModal(){
         datosNuevos = true;
@@ -243,55 +270,82 @@
     
       //EDITAR
 
-     $("#tabla-pedidos tbody").on("click",".editar", function(){
+      $("#tabla-pedidos tbody").on("click", ".editar", function() {
         const idpedidoeditar = $(this).data("idrecepcionista");
         
-        $.ajax({
-            url:'../controllers/recepcionista.controller.php',
-            type: 'POST',
-            data: {
-                operacion : 'obtenerpedido',
-                idrecepcionista    : idpedidoeditar
-            },
-            dataType: 'JSON',
-            success: function(result){
-                console.log(result);
-
-                datosNuevos = false
-
-                idrecepcionistaactualizar = result["idrecepcionista"];
-                $("#nombre").val(result["nombre"]);
-                $("#entrada").val(result["entrada"]);
-                $("#menu").val(result["menu"]);
-                $("#descripcion").val(result["descripcion"]);
-                $("#total").val(result["total"]);
-
-                $("#modal-titulo").html("Actualizar datos de pedido");
-
-                // Ponemos al modal en pantalla
-                $("#modal-registro-pedidos").modal("show");
+        Swal.fire({
+            title: '¿Está seguro de editar el pedido?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, editar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../controllers/recepcionista.controller.php',
+                    type: 'POST',
+                    data: {
+                        operacion: 'obtenerpedido',
+                        idrecepcionista: idpedidoeditar
+                    },
+                    dataType: 'JSON',
+                    success: function(result) {
+                        console.log(result);
+        
+                        datosNuevos = false;
+        
+                        idrecepcionistaactualizar = result["idrecepcionista"];
+                        $("#nombre").val(result["nombre"]);
+                        $("#entrada").val(result["entrada"]);
+                        $("#menu").val(result["menu"]);
+                        $("#descripcion").val(result["descripcion"]);
+                        $("#total").val(result["total"]);
+        
+                        $("#modal-titulo").html("Actualizar datos de pedido");
+        
+                        // Ponemos al modal en pantalla
+                        $("#modal-registro-pedidos").modal("show");
+                    }
+                });
             }
         });
-     });
+    });
+
 
      $("#tabla-pedidos tbody").on("click", ".eliminar", function() {
-    const idpedidoEliminar = $(this).data("idrecepcionista"); // Cambio realizado aquí
-    if (confirm("¿Está seguro de eliminar el pedido?")) {
-        $.ajax({
-            url: '../controllers/recepcionista.controller.php',
-            type: 'POST',
-            data: {
-                operacion: 'eliminar',
-                idrecepcionista: idpedidoEliminar // Cambio realizado aquí
-            },
-            success: function(result) {
-                if (result == "") {
-                    mostrarPedidos();
-                }
+        const idpedidoEliminar = $(this).data("idrecepcionista");
+
+        Swal.fire({
+            title: 'Confirmación',
+            text: '¿Está seguro de eliminar el pedido?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../controllers/recepcionista.controller.php',
+                    type: 'POST',
+                    data: {
+                        operacion: 'eliminar',
+                        idrecepcionista: idpedidoEliminar
+                    },
+                    success: function(result) {
+                        if (result == "") {
+                            mostrarPedidos();
+                            Swal.fire('Eliminado', 'El pedido ha sido eliminado correctamente', 'success');
+                        }
+                    }
+                });
             }
         });
-    }
-});
+    });
+
 
      // Ejecución automática
      mostrarPedidos();
@@ -300,6 +354,35 @@
 
 
     });
+
+    function imprimirTicket(idrecepcionista) {
+    // Realizar la solicitud AJAX para imprimir el ticket
+    $.ajax({
+        url: '../controllers/recepcionista.controller.php',
+        type: 'POST',
+        data: {
+        operacion: 'imprimirTicket',
+        idrecepcionista: idrecepcionista
+        },
+        dataType: 'json',
+        success: function(response) {
+        if (response.success) {
+            // Imprimir ticket exitoso, puedes realizar alguna acción adicional si es necesario
+            console.log('Ticket impreso correctamente');
+        } else {
+            // Mostrar mensaje de error en caso de fallo en la impresión
+            console.log('Error al imprimir el ticket:', response.message);
+        }
+        },
+        error: function(xhr, status, error) {
+            if (xhr.responseText) {
+                console.log('Error en la solicitud AJAX:', xhr.responseText);
+            } else {
+                console.log('Error en la solicitud AJAX:', error);
+            }
+        }
+    });
+}
     </script>
 </body>
 

@@ -1,6 +1,9 @@
 <?php
 
 require_once '../models/Recepcionista.php';
+require_once '../vendor/autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 if (isset($_POST['operacion'])) {
     $recepcionista = new Recepcionista();
@@ -21,6 +24,7 @@ if (isset($_POST['operacion'])) {
                     <td> 
                     <a href='#' data-idrecepcionista='{$recepcionista['idrecepcionista']}' class='btn btn-danger btn-sm eliminar'><i class='bi bi-trash3-fill'></i></a>
                     <a href='#' data-idrecepcionista='{$recepcionista['idrecepcionista']}' class='btn btn-info btn-sm editar'><i class='bi bi-pencil-fill'></i></a>
+                    <a href='#' data-idrecepcionita='{$recepcionista['idrecepcionista']}' class='btn btn-warning btn-sm imprimir' onclick='imprimirTicket({$recepcionista['idrecepcionista']})'><i class='bi bi-printer'></i></a>
                     </td>
                     </tr>
                 ";
@@ -61,6 +65,51 @@ if (isset($_POST['operacion'])) {
 
     if($_POST['operacion'] == 'eliminar'){
         $recepcionista->eliminarPedido($_POST['idrecepcionista']);
+    }
+
+    if ($_POST['operacion'] == 'imprimirTicket') {
+        $idrecepcionista = $_POST['idrecepcionista'];
+    
+        // Obtener los detalles del pedido con el ID proporcionado
+        $pedido = $recepcionista->getPedido($idrecepcionista);
+
+        try {
+        
+            if ($pedido) {
+                $nombre = $pedido['nombre'];
+                $entrada = $pedido['entrada'];
+                $menu = $pedido['menu'];
+                $descripcion = $pedido['descripcion'];
+                $total = $pedido['total'];
+        
+                // Crear instancia de Printer y conectar con la impresora
+                $connector = new WindowsPrintConnector('EPSON TM-T20IIIL Receipt');
+                $printer = new Printer($connector);
+        
+                // Enviar contenido del ticket a imprimir
+                $printer->text("¡Bienvenido a nuestro restaurante!\n");
+                $printer->text("Nombre: {$nombre}\n");
+                $printer->text("Entrada: {$entrada}\n");
+                $printer->text("Menú: {$menu}\n");
+                $printer->text("Descripción: {$descripcion}\n");
+                $printer->text("Total: {$total}\n");
+        
+                // Cortar el papel
+                $printer->cut();
+        
+                // Cerrar la conexión con la impresora
+                $printer->close();
+        
+                // Respuesta de éxito
+                echo json_encode(["success" => true]);
+            } else {
+                // Respuesta de error
+                echo json_encode(["success" => false, "message" => "No se encontró el pedido"]);
+            }
+        } catch (Exception $e) {
+            // Respuesta de error en caso de excepción
+            echo json_encode(["success" => false, "message" => "Error al generar el ticket: " . $e->getMessage()]);
+        }
     }
 }
 

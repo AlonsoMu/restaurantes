@@ -1,8 +1,12 @@
+
 <?php
-include('../models/Conexion.php');
-
+session_start();
+if (!isset($_SESSION["login"])) {
+    // Redirigir al usuario a la página de inicio de sesión
+    header("Location: ../login.php");
+    exit(); // Asegura que el script se detenga después de la redirección
+  }
 ?>
-
 <!doctype html>
 <html lang="es">
 
@@ -92,7 +96,9 @@ include('../models/Conexion.php');
             </table>
         </div>
         </div>
-
+            <div class="card-footer text-end d-flex justify-content-between">
+                <a href="entrada.php" class="btn btn-warning btn-sm"><i class="bi bi-arrow-left"></i> Volver</a>
+            </div>
         </div>
     </div>
 
@@ -112,7 +118,7 @@ include('../models/Conexion.php');
     <div class="modal fade" id="modal-registro-pedidos" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-secondary text-light">
+                <div class="modal-header bg-success text-light">
                     <h5 class="modal-title" id="modal-titulo">Registro de Pedidos</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -164,6 +170,7 @@ include('../models/Conexion.php');
             </div>
         </div>
     </div>
+
     
     
     
@@ -175,7 +182,13 @@ include('../models/Conexion.php');
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+  
+  
 
+
+    $("#regresar").click(function() {
+    window.location.href = "entrada.php";
+    });
 
   </script>
 
@@ -214,20 +227,32 @@ include('../models/Conexion.php');
 
     
 
-    function registrarPedido(){
-        if(confirm("¿Está seguro de registrar un pedido?")){
-
+    function registrarPedido() {
+        Swal.fire({
+            title: "¿Está seguro de registrar un pedido?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí",
+            cancelButtonText: "Cancelar",
+            customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger",
+            },
+            iconHtml: '<i class="bi bi-question-circle"></i>',
+        }).then((result) => {
+            if (result.isConfirmed) {
+            // El usuario hizo clic en "Sí"
             let datos = {
-                operacion   : 'registrar',
-                idmozo      : idmozoactualizar,
-                mesa       : $("#mesa").val(),
-                entrada     : $("#entrada").val(),
-                menu        : $("#menu").val(),
-                descripcion : $("#descripcion").val(),
-                total       : $("#total").val()
+                operacion: 'registrar',
+                idmozo: idmozoactualizar,
+                mesa: $("#mesa").val(),
+                entrada: $("#entrada").val(),
+                menu: $("#menu").val(),
+                descripcion: $("#descripcion").val(),
+                total: $("#total").val()
             };
 
-            if(!datosNuevos){
+            if (!datosNuevos) {
                 datos["operacion"] = "actualizar";
             }
 
@@ -235,18 +260,25 @@ include('../models/Conexion.php');
                 url: '../controllers/mozo.controller.php',
                 type: 'POST',
                 data: datos,
-                success: function(result){
-                    if(result == ""){
-                        $("#formulario-pedidos")[0].reset();
+                success: function(result) {
+                if (result == "") {
+                    $("#formulario-pedidos")[0].reset();
+                    mostrarPedidos();
+                    $("#modal-registro-pedidos").modal('hide'); // Cerrar el modal
+                    location.reload();
 
-                        mostrarPedidos();
-
-                        $("#modal-registro-pedidos").modal('hide'); // Cerrar el modal
-                        location.reload();
-                    }
+                    Swal.fire({
+                    title: "¡Pedido registrado correctamente!",
+                    icon: "success",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                    },
+                    });
+                }
                 }
             });
-        }
+            }
+        });
     }
 
     
@@ -262,55 +294,85 @@ include('../models/Conexion.php');
     
       //EDITAR
 
-     $("#tabla-pedidos tbody").on("click",".editar", function(){
+      $("#tabla-pedidos tbody").on("click", ".editar", function() {
         const idpedidoeditar = $(this).data("idmozo");
         
-        $.ajax({
-            url:'../controllers/mozo.controller.php',
-            type: 'POST',
-            data: {
-                operacion : 'obtenerpedido',
-                idmozo    : idpedidoeditar
-            },
-            dataType: 'JSON',
-            success: function(result){
-                console.log(result);
-
-                datosNuevos = false
-
-                idmozoactualizar = result["idmozo"];
-                $("#mesa").val(result["mesa"]);
-                $("#entrada").val(result["entrada"]);
-                $("#menu").val(result["menu"]);
-                $("#descripcion").val(result["descripcion"]);
-                $("#total").val(result["total"]);
-
-                $("#modal-titulo").html("Actualizar datos de pedido");
-
-                // Ponemos al modal en pantalla
-                $("#modal-registro-pedidos").modal("show");
+        Swal.fire({
+            title: '¿Está seguro de editar el pedido?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, editar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../controllers/mozo.controller.php',
+                    type: 'POST',
+                    data: {
+                        operacion: 'obtenerpedido',
+                        idmozo: idpedidoeditar
+                    },
+                    dataType: 'JSON',
+                    success: function(result) {
+                        console.log(result);
+        
+                        datosNuevos = false;
+        
+                        idmozoactualizar = result["idmozo"];
+                        $("#mesa").val(result["mesa"]);
+                        $("#entrada").val(result["entrada"]);
+                        $("#menu").val(result["menu"]);
+                        $("#descripcion").val(result["descripcion"]);
+                        $("#total").val(result["total"]);
+        
+                        $("#modal-titulo").html("Actualizar datos de pedido");
+        
+                        // Ponemos al modal en pantalla
+                        $("#modal-registro-pedidos").modal("show");
+                    }
+                });
             }
         });
-     });
+    });
 
-     $("#tabla-pedidos tbody").on("click",".eliminar",function(){
+
+     $("#tabla-pedidos tbody").on("click", ".eliminar", function() {
         const idpedidoEliminar = $(this).data("idmozo");
-        if(confirm("¿Está seguro de eliminar el pedido?")){
-            $.ajax({
-                url: '../controllers/mozo.controller.php',
-                type: 'POST',
-                data: {
-                    operacion : 'eliminar',
-                    idmozo : idpedidoEliminar
-                },
-                success: function(result){
-                    if(result == ""){
-                        mostrarPedidos();
+
+        Swal.fire({
+            title: '¿Está seguro de eliminar el pedido?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../controllers/mozo.controller.php',
+                    type: 'POST',
+                    data: {
+                        operacion: 'eliminar',
+                        idmozo: idpedidoEliminar
+                    },
+                    success: function(result) {
+                        if (result == "") {
+                            mostrarPedidos();
+                            Swal.fire({
+                                title: '¡Pedido eliminado correctamente!',
+                                icon: 'success',
+                                confirmButtonClass: 'btn btn-success'
+                            });
+                        }
                     }
-                }
-            });
-        }
-     });
+                });
+            }
+        });
+    });
+
 
      
 

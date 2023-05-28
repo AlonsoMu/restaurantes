@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <link rel="shortcut icon" href="images/gustitos.jpg">
   <title>Bienvenido</title>
 
   <!-- Required meta tags -->
@@ -15,6 +16,8 @@
    <!-- Bootstrap CSS v5.2.1 -->
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+    
 
     <!-- Íconos de Bootstrap-->
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
@@ -96,6 +99,7 @@
                   icon: 'success',
                   title: '¡Ingreso exitoso!',
                   text: 'Serás redirigido en 2 segundos.',
+                  showConfirmButton: false, // Eliminar el botón "OK"
                   timer: 2000, // tiempo en milisegundos
                   timerProgressBar: true,
                   willClose: () => {
@@ -115,6 +119,11 @@
       }
 
       $("#iniciar-sesion").click(iniciarSesion);
+      $("#clave").keypress(function(e) {
+        if (e.which == 13) { // 13 representa la tecla "Enter"
+          iniciarSesion();
+        }
+      });
 
 
     });

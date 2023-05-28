@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../models/Usuario.php';
 
 if (isset($_POST['operacion'])){
@@ -51,7 +52,7 @@ if (isset($_POST['operacion'])){
     if($_GET['operacion'] == 'finalizar'){
       session_destroy();
       session_unset();
-      header('Location:../index.php');
+      header('Location:../login.php');
     }
 }
     

@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION["login"])) {
+  // Redirigir al usuario a la página de inicio de sesión
+  header("Location: ../login.php");
+  exit(); // Asegura que el script se detenga después de la redirección
+}
+?>
 <!doctype html>
 <html lang="es">
 
@@ -10,6 +18,9 @@
   <!-- Bootstrap CSS v5.2.1 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+  <!-- Íconos de Bootstrap-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
 
   <link rel="shortcut icon" href="../images/gustitos.jpg">
 
@@ -60,6 +71,11 @@
       width: 250px;
       margin-right: 10px;
     }
+    .logout-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
   </style>
 </head>
 
@@ -75,7 +91,7 @@
           </a>
           <br>
           <div class="button-container">
-            <button class="button">Mozos</button>
+          <button class="button" onclick="location.href='mozos.php';">Mozos</button>
           </div>
         </div>
       </div>
@@ -87,7 +103,7 @@
           </a>
           <br>
           <div class="button-container">
-            <button class="button">Recepcionista</button>
+          <button class="button" onclick="location.href='recepcionistas.php';">Recepcionista</button>
           </div>
         </div>
       </div>
@@ -114,6 +130,59 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function logout() {
+            window.location.href = "../login.php";
+        }
+    </script>
+
+  
+  <!-- Logout button -->
+  <button class="btn btn-danger logout-button" onclick="logout()">
+      <i class="bi bi-box-arrow-left"></i>
+      Cerrar Sesión
+  </button>
+
+  <script>
+  function logout() {
+    Swal.fire({
+      icon: 'warning',
+      title: '¿Estás seguro?',
+      text: '¿Deseas cerrar sesión?',
+      showCancelButton: true,
+      confirmButtonText: 'Si', // Eliminar el texto "OK"
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Realizar una solicitud AJAX para destruir la sesión
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Cierre de sesión exitoso',
+              text: 'La sesión se ha cerrado correctamente.',
+              showConfirmButton: false, // Eliminar el botón de confirmación
+              timer: 2000,
+              timerProgressBar: true,
+              willClose: () => {
+                // Redirigir a la página de inicio de sesión
+                window.location.href = '../login.php';
+              }
+            });
+          }
+        };
+        xhttp.open("GET", "../controllers/usuario.controller.php?operacion=finalizar", true);
+        xhttp.send();
+      }
+    });
+  }
+</script>
+
 
 </body>
 
