@@ -2,7 +2,7 @@
 session_start();
 if (!isset($_SESSION["login"])) {
   // Redirigir al usuario a la página de inicio de sesión
-  header("Location: ../login.php");
+  header("Location: ../iniciar.php");
   exit(); // Asegura que el script se detenga después de la redirección
 }
 ?>
@@ -136,7 +136,7 @@ if (!isset($_SESSION["login"])) {
 
     <script>
         function logout() {
-            window.location.href = "../login.php";
+            window.location.href = "../iniciar.php";
         }
     </script>
 
@@ -171,7 +171,7 @@ if (!isset($_SESSION["login"])) {
               timerProgressBar: true,
               willClose: () => {
                 // Redirigir a la página de inicio de sesión
-                window.location.href = '../login.php';
+                window.location.href = '../iniciar.php';
               }
             });
           }

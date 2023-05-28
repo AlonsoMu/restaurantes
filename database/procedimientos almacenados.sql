@@ -184,9 +184,76 @@ END $$
 
 CALL spu_usuarios_login('AlonsoMu');
 
+-- LISTAR USUARIO
+DELIMITER $$
+CREATE PROCEDURE spu_usuarios_listar()
+BEGIN
+    SELECT 	idusuario,
+				nombreusuario,
+				apellidos,
+				nombres,
+				fecha_registro
+	FROM usuarios
+	WHERE estado = '1'
+	ORDER BY idusuario DESC;
+END $$
+CALL spu_usuarios_listar();
+
+-- REGISTRAR USUARIO
+
+DELIMITER $$
+CREATE PROCEDURE spu_usuarios_registrar(
+	IN nombres_		VARCHAR(30),
+	IN apellidos_ 		VARCHAR(30),
+	IN nombreusuario_	VARCHAR(50),
+	IN claveacceso_		VARCHAR(100)
+
+)
+BEGIN
+	INSERT INTO usuarios(nombres,apellidos,nombreusuario, claveacceso) 
+	VALUES (nombres_,apellidos_,nombreusuario_, claveacceso_);
+END $$
+CALL spu_usuarios_registrar('Harold Efrain','Quispe Napa','Sol caliente','gustitos');
+
+-- ELIMINAR USUARIO
+DELIMITER $$
+CREATE PROCEDURE spu_usuarios_eliminar(IN idusuario_ INT)
+BEGIN
+	UPDATE usuarios SET estado = '0' 
+	WHERE idusuario = idusuario_;
+END $$
+CALL spu_usuarios_eliminar(3);
 
 
+-- RECUPERAR USUARIOS ELIMINADOS
 
+DELIMITER $$
+CREATE PROCEDURE spu_usuarios_recuperar_id(IN idusuario_ INT)
+BEGIN
+	SELECT * FROM usuarios WHERE idusuario = idusuario_;
+END $$
+CALL spu_usuarios_recuperar_id(3);
+
+-- ACTUALIZAR USUARIOS 
+DELIMITER $$
+CREATE PROCEDURE spu_usuarios_actualizar(
+	IN idusuario_			INT,
+	IN nombres_			VARCHAR(30),
+	IN apellidos_			VARCHAR(30),
+	IN nombreusuario_ 		VARCHAR(50),
+	IN claveacceso_			VARCHAR(100)
+)
+BEGIN
+	UPDATE usuarios SET
+	nombres 			= nombres_,
+	apellidos			= apellidos_,
+	nombreusuario			= nombreusuario_,
+	claveacceso 			= claveacceso_,
+	fecha_modificacion		= NOW()
+	WHERE idusuario			= idusuario_;
+END $$
+
+CALL spu_usuarios_actualizar(4,'Harold Efrain Valo','Quispe Napa','Sol caliente','gustitos');
 
 
 

@@ -43,15 +43,17 @@ SELECT * FROM recepcionistas;
 CREATE TABLE usuarios(
 	idusuario	INT AUTO_INCREMENT 	PRIMARY KEY,
 	nombreusuario	VARCHAR(50)		NOT NULL,
+	apellidos	VARCHAR(30)		NOT NULL,
+	nombres		VARCHAR(30)		NOT NULL,
 	claveacceso	VARCHAR(100)		NOT NULL,
 	fecha_registro	DATETIME		NOT NULL DEFAULT NOW(),
 	fecha_modificacion	DATETIME	NULL,
 	estado		CHAR(1)			NOT NULL DEFAULT '1'	
 )ENGINE=INNODB;
 
-INSERT INTO usuarios(nombreusuario,claveacceso) VALUES
-('AlonsoMu','gustitos'),
-('FiorellaY','gustitos');
+INSERT INTO usuarios(nombreusuario, apellidos, nombres, claveacceso) VALUES
+('AlonsoMu','Muñoz Quispe','Alonso Enrique','gustitos'),
+('FiorellaY','Colquepisco Madrid','Fiorella Yakelyns','gustitoa');
 
 UPDATE usuarios SET
 	claveacceso = '$2y$10$9RlJvEUJI2RYbmK2a/sZbubKl0cTUL9ecBQ/I.wzSdvWt2BJ65JJu'

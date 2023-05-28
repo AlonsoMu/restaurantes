@@ -2,7 +2,7 @@
 session_start();
 if (!isset($_SESSION["login"])) {
     // Redirigir al usuario a la página de inicio de sesión
-    header("Location: ../login.php");
+    header("Location: ../iniciar.php");
     exit(); // Asegura que el script se detenga después de la redirección
   }
 ?>
