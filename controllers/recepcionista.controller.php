@@ -81,6 +81,8 @@ if (isset($_POST['operacion'])) {
                 $menu = $pedido['menu'];
                 $descripcion = $pedido['descripcion'];
                 $total = $pedido['total'];
+                $fecha_registro = $pedido['fecha_registro']; // Obtener la fecha de registro desde la base de datos
+                
         
                 // Crear instancia de Printer y conectar con la impresora
                 $connector = new WindowsPrintConnector('EPSON TM-T20IIIL Receipt');
@@ -88,6 +90,7 @@ if (isset($_POST['operacion'])) {
         
                 // Enviar contenido del ticket a imprimir
                 $printer->text("¡Bienvenido a nuestro restaurante!\n");
+                $printer->text("Fecha de registro: {$fecha_registro}\n"); // Mostrar la fecha de registro
                 $printer->text("Nombre: {$nombre}\n");
                 $printer->text("Entrada: {$entrada}\n");
                 $printer->text("Menú: {$menu}\n");

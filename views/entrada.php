@@ -112,12 +112,12 @@ if (!isset($_SESSION["login"])) {
     <div class="row justify-content-center">
       <div class="col-md-6 col-lg-4">
         <div class="image-container">
-          <a href="ruta3.html">
+          <a href="caja.php">
             <img src="../images/caja.jpg" alt="Imagen 3" class="image">
           </a>
           <br>
           <div class="button-container">
-            <button class="button">Caja</button>
+            <button class="button" onclick="location.href='caja.php';">Caja</button>
           </div>
         </div>
       </div>
