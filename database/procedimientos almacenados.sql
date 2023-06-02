@@ -35,7 +35,7 @@ BEGIN
 	(_mesa,_entrada,_menu,_descripcion,_total);
 END $$
 
-CALL spu_mozos_registrar(4,'Sopa de Casa','Bisteck con papas fritas','Bien frito',13);
+CALL spu_mozos_registrar();
 
 -- ELIMINAR PEDIDO DE MOZO
 
@@ -47,7 +47,7 @@ BEGIN
 	DELETE FROM mozos WHERE idmozo = _idmozo;
 END $$
 
-CALL spu_mozos_eliminar(4);
+CALL spu_mozos_eliminar();
 
 
 -- ACTUALIZAR PEDIDO DE MOZO
@@ -73,7 +73,7 @@ BEGIN
 	WHERE idmozo = _idmozo;
 END $$
 
-CALL spu_mozos_actualizar(1,1,'Sopa de Casa','Arroz con Pollo','Sin papa',15);
+CALL spu_mozos_actualizar();
 
 -- RECUPERAR IDS
 DELIMITER $$
@@ -81,11 +81,6 @@ CREATE PROCEDURE spu_mozos_recuperar_ids(IN _idmozo INT)
 BEGIN
 	SELECT * FROM mozos WHERE idmozo =  _idmozo;
 END $$
-
-
-
-
-
 
 -- LISTAR PEDIDOS DE RECEPCIONISTA
 
@@ -123,7 +118,7 @@ BEGIN
 	(_nombre,_entrada,_menu,_descripcion,_total);
 END $$
 
-CALL spu_recepcionistas_registrar('Gabi','Sopa de Casa','Seco de Res','Sin Yuca',13);
+CALL spu_recepcionistas_registrar();
 
 -- ELIMINAR PEDIDO DE RECEPCIONISTA
 
@@ -135,7 +130,7 @@ BEGIN
 	DELETE FROM recepcionistas WHERE idrecepcionista = _idrecepcionista;
 END $$
 
-CALL spu_recepcionistas_eliminar(4);
+CALL spu_recepcionistas_eliminar();
 
 
 -- ACTUALIZAR PEDIDO DE RECEPCIONISTA
@@ -161,7 +156,7 @@ BEGIN
 	WHERE idrecepcionista = _idrecepcionista;
 END $$
 
-CALL spu_recepcionistas_actualizar(2,'Tatiana','Causa','Estofado de pollo','Poco arroz',11);
+CALL spu_recepcionistas_actualizar();
 
 
 -- RECUPERAR IDS
@@ -182,7 +177,7 @@ BEGIN
 	WHERE nombreusuario = nombreusuario_ AND estado = '1'; 
 END $$
 
-CALL spu_usuarios_login('AlonsoMu');
+CALL spu_usuarios_login();
 
 -- LISTAR USUARIO
 DELIMITER $$
@@ -213,7 +208,7 @@ BEGIN
 	INSERT INTO usuarios(nombres,apellidos,nombreusuario, claveacceso) 
 	VALUES (nombres_,apellidos_,nombreusuario_, claveacceso_);
 END $$
-CALL spu_usuarios_registrar('Harold Efrain','Quispe Napa','Sol caliente','gustitos');
+CALL spu_usuarios_registrar();
 
 -- ELIMINAR USUARIO
 DELIMITER $$
@@ -222,7 +217,7 @@ BEGIN
 	UPDATE usuarios SET estado = '0' 
 	WHERE idusuario = idusuario_;
 END $$
-CALL spu_usuarios_eliminar(3);
+CALL spu_usuarios_eliminar();
 
 
 -- RECUPERAR USUARIOS ELIMINADOS
@@ -232,7 +227,7 @@ CREATE PROCEDURE spu_usuarios_recuperar_id(IN idusuario_ INT)
 BEGIN
 	SELECT * FROM usuarios WHERE idusuario = idusuario_;
 END $$
-CALL spu_usuarios_recuperar_id(3);
+CALL spu_usuarios_recuperar_id();
 
 -- ACTUALIZAR USUARIOS 
 DELIMITER $$
@@ -253,10 +248,49 @@ BEGIN
 	WHERE idusuario			= idusuario_;
 END $$
 
-CALL spu_usuarios_actualizar(4,'Harold Efrain Valo','Quispe Napa','Sol caliente','gustitos');
+CALL spu_usuarios_actualizar();
 
+-- TRAER LOS PEDIDOS POR FECHA Y MES
 
+DELIMITER $$
+CREATE PROCEDURE spu_suma_obtenerPedidosPorFecha(IN anio INT, IN mes INT, IN dia INT)
+BEGIN
+    SELECT DATE_FORMAT(CONCAT(anio, '-', mes, '-', dia), '%Y-%m-%d') AS fecha_registro,
+        IFNULL((SELECT SUM(total) FROM mozos WHERE DATE(fecha_registro) = DATE_FORMAT(CONCAT(anio, '-', mes, '-', dia), '%Y-%m-%d')), 0.00) AS total_mozos,
+        IFNULL((SELECT SUM(total) FROM recepcionistas WHERE DATE(fecha_registro) = DATE_FORMAT(CONCAT(anio, '-', mes, '-', dia), '%Y-%m-%d')), 0.00) AS total_recepcionistas,
+        IFNULL((SELECT SUM(total) FROM mozos WHERE DATE(fecha_registro) = DATE_FORMAT(CONCAT(anio, '-', mes, '-', dia), '%Y-%m-%d')), 0.00) +
+        IFNULL((SELECT SUM(total) FROM recepcionistas WHERE DATE(fecha_registro) = DATE_FORMAT(CONCAT(anio, '-', mes, '-', dia), '%Y-%m-%d')), 0.00) AS total_general;
+END $$
 
+CALL spu_suma_obtenerPedidosPorFecha();
+
+DELIMITER $$
+CREATE PROCEDURE spu_tiempo_obtenerPedidosPorFecha(IN anio INT, IN mes INT)
+BEGIN
+    DECLARE total_mozos DECIMAL(10, 2);
+    DECLARE total_recepcionistas DECIMAL(10, 2);
+    DECLARE total_general DECIMAL(10, 2);
+
+    -- Obtener la suma total del mes para la tabla de mozos
+    SELECT COALESCE(SUM(total), 0.00) INTO total_mozos
+    FROM mozos
+    WHERE YEAR(fecha_registro) = anio
+    AND MONTH(fecha_registro) = mes;
+
+    -- Obtener la suma total del mes para la tabla de recepcionistas
+    SELECT COALESCE(SUM(total), 0.00) INTO total_recepcionistas
+    FROM recepcionistas
+    WHERE YEAR(fecha_registro) = anio
+    AND MONTH(fecha_registro) = mes;
+
+    -- Calcular el total general sumando las sumas de mozos y recepcionistas
+    SET total_general = total_mozos + total_recepcionistas;
+
+    -- Retornar los resultados
+    SELECT total_mozos, total_recepcionistas, total_general;
+END $$
+
+CALL spu_tiempo_obtenerPedidosPorFecha();
 
 
 

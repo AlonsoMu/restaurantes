@@ -1,5 +1,4 @@
-CREATE DATABASE restaurante
-USE DATABASE restaurante;
+
 
 CREATE TABLE mozos(
 	idmozo	INT AUTO_INCREMENT 	PRIMARY KEY,
@@ -13,12 +12,7 @@ CREATE TABLE mozos(
 	estado		CHAR(1)			NOT NULL DEFAULT '1'
 )ENGINE=INNODB;
 
-INSERT INTO mozos(mesa,entrada,menu,descripcion,total)VALUES
-(1,'Causa','Milanesa con papas fritas','Mas ensalada que arroz',13),
-(2,'Sopa de Moron','Tallarines Rojos','Sin papa',13),
-(3,'Crema de rocoto','Arroz con pato','Bien servido',13);
 
-SELECT * FROM mozos;
 
 
 CREATE TABLE recepcionistas(
@@ -33,12 +27,9 @@ CREATE TABLE recepcionistas(
 	estado		CHAR(1)			NOT NULL DEFAULT '1'
 )ENGINE=INNODB;
 
-INSERT INTO recepcionistas(nombre,entrada,menu,descripcion,total)VALUES
-('Alonso','Causa','Milanesa con papas fritas','Mas ensalada que arroz',13),
-('Castilla','Sopa de Moron','Tallarines Rojos','Sin papa',13),
-('Fiorella','Crema de rocoto','Arroz con pato','Bien servido',13);
 
-SELECT * FROM recepcionistas;
+
+
 
 CREATE TABLE usuarios(
 	idusuario	INT AUTO_INCREMENT 	PRIMARY KEY,
@@ -63,4 +54,5 @@ UPDATE usuarios SET
 	claveacceso = '$2y$10$TAbap4jTCQ3MV9MafFCuKeqG2VAUCZFz/DHcfx48upyYZsy/zZjlO'
 	WHERE idusuario = 2;
 	
-SELECT * FROM usuarios;
+
+
