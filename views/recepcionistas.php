@@ -58,7 +58,7 @@ if (!isset($_SESSION["login"])) {
 
     <div class="container mt-3 ">
         <div class="card table-responsive">
-        <div class="card-header bg-primary text-light">
+        <div class="card-header bg-info text-light">
             <div class="row">
                 <div class="col-md-6">
                     <div class="logo">

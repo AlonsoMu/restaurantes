@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pedidos</title>
+    <title>Administración</title>
 
     <!-- Bootstrap CSS v5.2.1 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 
+    <!-- Íconos de Bootstrap-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+
+    <link rel="shortcut icon" href="../images/gustitos.jpg">
+
     <style>
         .pagination li {
             cursor: pointer;
         }
+
     </style>
 </head>
 <body>
@@ -23,10 +29,12 @@
                 <input type="date" id="fecha" class="form-control">
             </div>
             <button type="button" id="btnAbrirModal" class="btn btn-primary" onclick="obtenerPedidos()">Mostrar Pedidos</button>
+            
+            
         </div>
     </div>
 
-    <hr>
+    
 
     <div class="row mt-4">
         <div class="col-md-6">
@@ -43,7 +51,15 @@
             </div>
         </div>
     </div>
+    <div class="clearfix"></div>
+            <div class="d-flex justify-content-left mt-4">
+                <a href="entrada.php" class="btn btn-warning"><i class="bi bi-arrow-return-left"></i> Volver</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 
 <!-- Modal para mostrar el precio total del mes -->
 <div id="modal-mes" class="modal" style="display: none;">
