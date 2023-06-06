@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="shortcut icon" href="images/gustitos.jpg">
+  <link rel="shortcut icon" href="../../images/gustitos.jpg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
   <link rel="stylesheet" href="../../css/styles.css">
@@ -49,7 +49,7 @@
                 <div class="card-back">
                   <div class="center-wrap">
                     <div class="section text-center">
-                      <form action="controllers/usuario.controller.php" method="post">
+                      <form action="../../controllers/usuario.controller.php" method="post">
                       <h4 class="mb-3 pb-3">Forma Parte de Nosotros</h4>
                         <div class="form-group">
                             <input type="text" class="form-style" placeholder="Nombres" name="nombres">

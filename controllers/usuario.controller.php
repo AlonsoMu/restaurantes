@@ -28,6 +28,7 @@ if (isset($_POST['operacion'])){
           $resultado["status"] = true;
           $resultado["mensaje"] = "Bienvenido al sistema";
           $_SESSION["login"] = true;
+          $_SESSION["nombreusuario"] = $_POST['nombreusuario']; //Esto nomas era basura, go valooooooo
   
         }else{
           $resultado["mensaje"] = "Error en la contraseña";
@@ -83,7 +84,7 @@ if (isset($_POST['operacion'])){
       $usuario->registrarUsuario($datosForm);
 
       // Redirigir a la página de inicio de sesión con el parámetro "registroExitoso" en la URL
-      header('Location: ../iniciar.php?registroExitoso=true');
+      header('Location: ../views/dashboard/iniciar.php?registroExitoso=true');
       exit();
       
     }
