@@ -24,7 +24,7 @@ class Usuario extends Conexion{
   public function listarUsuarios(){
     try {
       // 1. Preparamos la consulta
-     $consulta = $this->accesoBD->prepare("CALL spu_acceso_listar()");
+     $consulta = $this->accesoBD->prepare("CALL spu_usuarios_listar()");
      // 2. Ejecutamos la consulta
      $consulta->execute();
      // 3. Devolvemos el resultado

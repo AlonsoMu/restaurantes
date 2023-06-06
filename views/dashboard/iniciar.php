@@ -9,7 +9,7 @@
   <link rel="shortcut icon" href="images/gustitos.jpg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="../../css/styles.css">
 </head>
 
 <body>
@@ -94,7 +94,7 @@
 
         if (usuario != "" && clave != "") {
           $.ajax({
-            url: 'controllers/usuario.controller.php',
+            url: '../../controllers/usuario.controller.php',
             type: 'POST',
             data: {
                 operacion: 'login',
@@ -113,7 +113,7 @@
                   timer: 2000, // tiempo en milisegundos
                   timerProgressBar: true,
                   willClose: () => {
-                    window.location.href = "views/entrada.php";
+                    window.location.href = "nose.php";
                   }
                 });
               } else {

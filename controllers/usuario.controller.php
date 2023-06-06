@@ -123,7 +123,7 @@ if (isset($_POST['operacion'])){
     if($_GET['operacion'] == 'finalizar'){
       session_destroy();
       session_unset();
-      header('Location:../iniciar.php');
+      header('Location:../views/dashboard/iniciar.php');
     }
 }
     
