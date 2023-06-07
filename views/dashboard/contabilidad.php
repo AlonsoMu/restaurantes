@@ -208,6 +208,7 @@ if (isset($_SESSION['nombreusuario'])){
         <script>
             function obtenerPedidos() {
                 var fecha = $('#fecha').val();
+                
 
                 if (fecha) {
                     $.ajax({
@@ -218,7 +219,9 @@ if (isset($_SESSION['nombreusuario'])){
                             fecha: fecha
                         },
                         success: function (response) {
+                            //var totalGeneralDia = response.total_general_dia;
                             mostrarModalPedidos(response.total_mozos_dia, response.total_recepcionistas_dia, response.total_general_dia);
+                            //window.location.href = "nose.php?totalPedidosDia=" + totalGeneralDia;
                         },
                         error: function (xhr, status, error) {
                             console.log(xhr.responseText);
@@ -255,7 +258,7 @@ if (isset($_SESSION['nombreusuario'])){
                             error: function(xhr, status, error) {
                                 console.log(xhr.responseText);
                             }
-                        });
+                        }); 
                     }
                 });
             });

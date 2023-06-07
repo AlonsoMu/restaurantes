@@ -293,6 +293,31 @@ END $$
 CALL spu_tiempo_obtenerPedidosPorFecha();
 
 
+-- GRAFICOS ESTADISTICOS
+DELIMITER $$
+CREATE PROCEDURE spu_estadistico_mozos(IN fecha DATE, OUT total_pedidos INT)
+BEGIN
+    SELECT COUNT(*) INTO total_pedidos
+    FROM mozos
+    WHERE DATE(fecha_registro) = fecha;
+END $$
+
+CALL spu_estadistico_mozos('2023-05-28', @total_pedidos_mozos);
+SELECT @total_pedidos_mozos;
+
+
+DELIMITER $$
+CREATE PROCEDURE spu_estadistico_recepcionistas(IN fecha DATE, OUT total_pedidos INT)
+BEGIN
+    SELECT COUNT(*) INTO total_pedidos
+    FROM recepcionistas
+    WHERE DATE(fecha_registro) = fecha;
+END $$
+
+CALL spu_estadistico_recepcionistas('2023-05-19', @total_pedidos_recepcionistas);
+SELECT @total_pedidos_recepcionistas;
+
+
 
 
 

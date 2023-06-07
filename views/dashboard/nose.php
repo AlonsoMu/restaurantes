@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 if (!isset($_SESSION["login"])) {
     // Redirigir al usuario a la página de inicio de sesión
@@ -10,6 +11,9 @@ $nombreusuario="";
 if (isset($_SESSION['nombreusuario'])){
     $nombreusuario= $_SESSION['nombreusuario'];
 }
+//$totalPedidosDia = isset($_GET['totalPedidosDia']) ? $_GET['totalPedidosDia'] : "";
+
+
 
 ?>
 <!DOCTYPE html>
@@ -94,18 +98,18 @@ if (isset($_SESSION['nombreusuario'])){
                             <li class="breadcrumb-item active">Panel Administrativo</li>
                         </ol>
                         <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Primary Card</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-primary text-white mb-4">
+                                <div class="card-body">Total de Pedidos</div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <span class="small text-white" id="totalPedidos">Prueba <!--echo "Total de pedidos del día: " . $totalPedidosDia;?>--></span>
+                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Warning Card</div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                                <div class="card bg-info text-white mb-4">
+                                    <div class="card-body">Success Card</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -211,6 +215,9 @@ if (isset($_SESSION['nombreusuario'])){
         <script src="assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
+
+
+
 
 
     </body>
